@@ -1,0 +1,18 @@
+{
+  "arrowParens": "avoid",
+  "bracketSpacing": false,
+  "endOfLine": "lf",
+  "jsxSingleQuote": true,
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "angular"
+      }
+    }
+  ],
+  "printWidth": 140,
+  "quoteProps": "consistent",
+  "singleQuote": true,
+  "trailingComma": "all"
+}

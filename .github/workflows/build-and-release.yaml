@@ -1,0 +1,47 @@
+name: UI OpenAPI Generate
+
+on:
+  # option to run manually from the Actions tab
+  workflow_dispatch:
+
+  # can be called from other workflows
+  workflow_call:
+
+  push:
+    branches: [main]
+
+jobs:
+  build-and-publish:
+    name: Build and publish @axoflow/openapi-preprocessor-cli tool
+    runs-on: ubuntu-latest
+    # Add 'id-token' with the intended permissions for workload identity federation
+    permissions:
+      contents: "read"
+      id-token: "write"
+    steps:
+      - name: Checkout
+        uses: "actions/checkout@v3"
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.15.1'
+
+      - name: Google auth
+        id: auth
+        uses: "google-github-actions/auth@v1"
+        with:
+          workload_identity_provider: "${{ secrets.WIF_PROVIDER }}"
+          service_account: "${{ secrets.WIF_SERVICE_ACCOUNT }}"
+          token_format: "access_token"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build lib
+        run: npm run build
+
+      - name: Publish lib
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
