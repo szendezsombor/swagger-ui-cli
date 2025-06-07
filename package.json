@@ -1,0 +1,55 @@
+{
+  "name": "swagger-ui-cli",
+  "version": "0.0.4",
+  "main": "index.js",
+  "bin": {
+    "swagger-ui-cli": "dist/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.js",
+    "format": "prettier --write '**/*.{html,js,json,md,scss,ts}'",
+    "format:check": "prettier --check '**/*.{html,js,json,md,scss,ts}'",
+    "lint": "eslint . --ext .js,.ts --fix",
+    "lint:check": "eslint . --ext .js,.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/szendezsombor/swagger-ui-cli.git"
+  },
+  "keywords": [],
+  "author": "Zsombor Szende",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/szendezsombor/swagger-ui-cli/issues"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.js.map",
+    "public/**/*",
+    "Readme.md",
+    "LICENSE"
+  ],
+  "homepage": "https://github.com/szendezsombor/swagger-ui-cli#readme",
+  "description": "This is a CLI tool bundle your openapi documentation or serve for live editing.",
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@types/node": "^22.15.30",
+    "@types/signale": "^1.4.7",
+    "@types/swagger-ui": "^5.21.1",
+    "esbuild": "^0.25.5",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "jiti": "^2.4.2",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.33.1"
+  },
+  "dependencies": {
+    "commander": "^14.0.0",
+    "signale": "^1.4.0",
+    "swagger-ui": "^5.24.0",
+    "swagger-ui-dist": "^5.24.0",
+    "vite": "^6.3.5"
+  }
+}
