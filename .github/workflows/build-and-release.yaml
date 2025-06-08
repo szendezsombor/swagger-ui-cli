@@ -1,4 +1,4 @@
-name: UI OpenAPI Generate
+name: Build and Release
 
 on:
   # option to run manually from the Actions tab
@@ -12,7 +12,7 @@ on:
 
 jobs:
   build-and-publish:
-    name: Build and publish @axoflow/openapi-preprocessor-cli tool
+    name: Build and publish
     runs-on: ubuntu-latest
     # Add 'id-token' with the intended permissions for workload identity federation
     permissions:

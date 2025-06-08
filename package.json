@@ -1,13 +1,15 @@
 {
-  "name": "swagger-ui-cli",
-  "version": "0.0.4",
-  "main": "index.js",
+  "name": "swagger-ui-cli-test",
+  "version": "0.0.5",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
     "swagger-ui-cli": "dist/index.js"
   },
   "type": "module",
   "scripts": {
     "build": "node esbuild.config.js",
+    "types": "tsc --declaration src/index.ts --emitDeclarationOnly --outDir ./dist",
     "format": "prettier --write '**/*.{html,js,json,md,scss,ts}'",
     "format:check": "prettier --check '**/*.{html,js,json,md,scss,ts}'",
     "lint": "eslint . --ext .js,.ts --fix",
@@ -25,6 +27,7 @@
   },
   "files": [
     "dist/**/*.js",
+    "dist/**/*.d.ts",
     "dist/**/*.js.map",
     "public/**/*",
     "Readme.md",
