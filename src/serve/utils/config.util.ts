@@ -2,6 +2,7 @@ import {join} from 'path';
 import {PUBLIC_PATH} from '../../public-path';
 import {readFileSync} from 'fs';
 import {existsSync, writeFileSync} from 'node:fs';
+import {ServeConfig} from '../models';
 
 export function handleConfigFileReplacement(config: string): void {
   const indexTsFile = join(PUBLIC_PATH, 'index.ts');
@@ -12,4 +13,10 @@ export function handleConfigFileReplacement(config: string): void {
     `import config from '${outputConfigFile}';`,
   );
   return writeFileSync(indexTsFile, res, {encoding: 'utf-8'});
+}
+
+export async function getConfig(config: string): Promise<ServeConfig> {
+  const userConfigFile = join(process.cwd(), config);
+  const configFile = existsSync(userConfigFile) ? userConfigFile : join(PUBLIC_PATH, './swagger-ui.conf');
+  return (await import(configFile))['default'] as ServeConfig;
 }

@@ -3,10 +3,11 @@ import {ServeOptionsModel} from './models';
 import {readFileSync, copyFileSync} from 'fs';
 import signale from 'signale';
 import {PUBLIC_PATH} from '../public-path';
-import {handleConfigFileReplacement} from './utils';
+import {getConfig, handleConfigFileReplacement} from './utils';
 
 export const serve = async (openapiFilePath: string, options: ServeOptionsModel) => {
   handleConfigFileReplacement(options.config);
+  const config = await getConfig(options.config);
   const devServer = await createServer({
     root: PUBLIC_PATH,
     optimizeDeps: {
@@ -16,6 +17,7 @@ export const serve = async (openapiFilePath: string, options: ServeOptionsModel)
       host: options.domain,
       port: options.port,
       allowedHosts: [options.domain],
+      ...(config.server || {}),
     },
     plugins: [
       {
