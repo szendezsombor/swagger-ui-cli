@@ -1,9 +1,11 @@
 import {SwaggerUIOptions} from 'swagger-ui';
+import {ServerOptions} from 'vite';
 
-export type SwaggerConfig = Omit<SwaggerUIOptions, 'url' | 'dom_id'>;
+export type SwaggerUIConfigOptions = Omit<SwaggerUIOptions, 'url' | 'dom_id'>;
 
 export interface ServeConfig {
-  config?: SwaggerConfig;
+  server?: ServerOptions;
+  config?: SwaggerUIConfigOptions;
 }
 
 export interface ServeOptionsModel {

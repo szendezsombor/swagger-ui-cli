@@ -1,6 +1,8 @@
 # Swagger UI CLI
 
 [![Package lint](https://github.com/szendezsombor/swagger-ui-cli/actions/workflows/lint.yaml/badge.svg)](https://github.com/szendezsombor/swagger-ui-cli/actions/workflows/lint.yaml)
+[![Build and Release](https://github.com/szendezsombor/swagger-ui-cli/actions/workflows/build-and-release.yaml/badge.svg)](https://github.com/szendezsombor/swagger-ui-cli/actions/workflows/build-and-release.yaml)
+[![Discord](https://dcbadge.limes.pink/api/server/6F6MCSKQ?style=flat)](https://discord.gg/6F6MCSKQ)
 
 This CLI tool is designed to **serve and live-reload an OpenAPI specification file** during development, and also to **build a static HTML page** from your OpenAPI spec file.
 
@@ -18,14 +20,18 @@ swagger-ui-cli serve <openapi-file>
 
 - `--port`: The port to serve the Swagger UI on. Default is `8000`.
 - `--domain`: The domain to serve the Swagger UI on. Default is `localhost`.
-- `--config`: Path to a custom [Swagger UI configuration file](https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/configuration.md). Default is `swagger-ui.config.ts` / `swagger-ui-config.js`.
+- `--config`: Path to the configuration file, there you can configure the [swagger-ui](https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/configuration.md) and also the [dev server](https://vite.dev/config/server-options). Default is `swagger-ui.config.ts` / `swagger-ui-config.js`.
 
 ### swagger-ui.config.ts
 
 ```typescript
-import {ServeConfig} from 'swagger-ui-cli-test';
+import {ServeConfig} from 'swagger-ui-cli';
 
 export default {
+  server: {
+    // Under the hood there is a simple vite server running, so you can use any vite server options here. https://vite.dev/config/server-options
+    port: 1234,
+  },
   config: {
     // For more please visit the official site: https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/configuration.md
     docExpansion: 'none',
