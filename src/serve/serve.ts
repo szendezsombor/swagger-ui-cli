@@ -3,15 +3,19 @@ import {ServeOptionsModel} from './models';
 import {readFileSync, copyFileSync} from 'fs';
 import signale from 'signale';
 import {PUBLIC_PATH} from '../public-path';
+import {handleConfigFileReplacement} from './utils';
 
 export const serve = async (openapiFilePath: string, options: ServeOptionsModel) => {
+  handleConfigFileReplacement(options.config);
   const devServer = await createServer({
     root: PUBLIC_PATH,
     optimizeDeps: {
       include: ['swagger-ui'],
     },
     server: {
+      host: options.domain,
       port: options.port,
+      allowedHosts: [options.domain],
     },
     plugins: [
       {
@@ -49,5 +53,8 @@ export const serve = async (openapiFilePath: string, options: ServeOptionsModel)
 
   await devServer.listen();
 
-  signale.success(`Server is running on http://${options.domain}:${options.port}`);
+  const startedPort = devServer.config.server.port;
+  if (startedPort !== options.port) signale.warn(`Port already in use: ${options.port}. Using port: ${startedPort} instead.`);
+
+  signale.success(`Server is running on http://${options.domain}:${devServer.config.server.port}`);
 };

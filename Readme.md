@@ -1,5 +1,7 @@
 # Swagger UI CLI
 
+[![Package lint](https://github.com/szendezsombor/swagger-ui-cli/actions/workflows/lint.yaml/badge.svg)](https://github.com/szendezsombor/swagger-ui-cli/actions/workflows/lint.yaml)
+
 This CLI tool is designed to **serve and live-reload an OpenAPI specification file** during development, and also to **build a static HTML page** from your OpenAPI spec file.
 
 ## Usage
@@ -9,5 +11,31 @@ This CLI tool is designed to **serve and live-reload an OpenAPI specification fi
 This command will open a live reloading server, if you change your config it will change the page.
 
 ```bash
-swagger-ui-cli serve [options] <openapi-file>
+swagger-ui-cli serve <openapi-file>
+```
+
+#### Options
+
+- `--port`: The port to serve the Swagger UI on. Default is `8000`.
+- `--domain`: The domain to serve the Swagger UI on. Default is `localhost`.
+- `--config`: Path to a custom [Swagger UI configuration file](https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/configuration.md). Default is `swagger-ui.config.ts` / `swagger-ui-config.js`.
+
+### swagger-ui.config.ts
+
+```typescript
+import {ServeConfig} from 'swagger-ui-cli-test';
+
+export default {
+  config: {
+    // For more please visit the official site: https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/configuration.md
+    docExpansion: 'none',
+    deepLinking: true,
+    displayOperationId: true,
+    defaultModelsExpandDepth: -1,
+    showExtensions: true,
+    showCommonExtensions: true,
+    filter: true,
+    onComplete: () => console.log('swagger can run'),
+  },
+} as ServeConfig;
 ```
