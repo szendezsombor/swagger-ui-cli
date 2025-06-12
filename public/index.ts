@@ -1,7 +1,7 @@
 // Load the Swagger UI library and its CSS
 import 'swagger-ui/dist/swagger-ui.css';
 import SwaggerUI from 'swagger-ui';
-import config from './swagger-ui.conf';
+import config from './swagger-ui.config';
 
 // Create a SwaggerUI instance with the OpenAPI specification
 const swaggerUI = SwaggerUI({

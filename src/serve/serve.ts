@@ -56,7 +56,8 @@ export const serve = async (openapiFilePath: string, options: ServeOptionsModel)
   await devServer.listen();
 
   const startedPort = devServer.config.server.port;
-  if (startedPort !== options.port) signale.warn(`Port already in use: ${options.port}. Using port: ${startedPort} instead.`);
+  if (startedPort !== options.port && startedPort !== config.server?.port)
+    signale.warn(`Port already in use: ${options.port}. Using port: ${startedPort} instead.`);
 
   signale.success(`Server is running on http://${options.domain}:${devServer.config.server.port}`);
 };

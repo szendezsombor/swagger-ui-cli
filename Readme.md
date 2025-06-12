@@ -20,13 +20,11 @@ swagger-ui-cli serve <openapi-file>
 
 - `--port`: The port to serve the Swagger UI on. Default is `8000`.
 - `--domain`: The domain to serve the Swagger UI on. Default is `localhost`.
-- `--config`: Path to the configuration file, there you can configure the [swagger-ui](https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/configuration.md) and also the [dev server](https://vite.dev/config/server-options). Default is `swagger-ui.config.ts` / `swagger-ui-config.js`.
+- `--config`: Path to the configuration file, there you can configure the [swagger-ui](https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/configuration.md) and also the [dev server](https://vite.dev/config/server-options). Default is `swagger-ui.config.js`.
 
-### swagger-ui.config.ts
+### swagger-ui.config.js
 
-```typescript
-import {ServeConfig} from 'swagger-ui-cli';
-
+```javascript
 export default {
   server: {
     // Under the hood there is a simple vite server running, so you can use any vite server options here. https://vite.dev/config/server-options
@@ -43,5 +41,5 @@ export default {
     filter: true,
     onComplete: () => console.log('swagger can run'),
   },
-} as ServeConfig;
+};
 ```
