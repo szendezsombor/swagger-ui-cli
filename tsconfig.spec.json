@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["jest.config.ts", "src/**/*.spec.ts"],
+  "compilerOptions": {
+    "composite": true,
+    "types": ["jest", "node", "vite/client", "cli-testing-library/jest", "@types/jest-image-snapshot", "./src/test/environment.d.ts"]
+  }
+}
