@@ -1,11 +1,17 @@
 import {createServer, CustomPayload, ViteDevServer} from 'vite';
-import {ServeOptionsModel} from './models';
+import {ServeOptionsModel} from '../models';
 import {readFileSync, copyFileSync} from 'fs';
 import signale from 'signale';
-import {PUBLIC_PATH} from '../public-path';
-import {getConfig, handleConfigFileReplacement} from './utils';
+import {PUBLIC_PATH} from '../../public-path';
+import {getConfig, handleConfigFileReplacement} from '../utils';
+import {existsSync} from 'node:fs';
 
 export const serve = async (openapiFilePath: string, options: ServeOptionsModel) => {
+  if (!existsSync(openapiFilePath)) {
+    signale.error('The OpenAPI file does not exist:', openapiFilePath);
+    return process.exit(1);
+  }
+
   handleConfigFileReplacement(options.config);
   const config = await getConfig(options.config);
   const devServer = await createServer({

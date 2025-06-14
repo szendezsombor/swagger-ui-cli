@@ -8,7 +8,7 @@ import defaultConfig from '../../../public/swagger-ui.config';
 export function handleConfigFileReplacement(config: string): void {
   const indexTsFile = join(PUBLIC_PATH, 'index.ts');
   const userConfigFile = join(process.cwd(), config);
-  const outputConfigFile = existsSync(userConfigFile) ? userConfigFile : './swagger-ui.config.js';
+  const outputConfigFile = existsSync(userConfigFile) ? userConfigFile : './swagger-ui.config';
   const res = readFileSync(indexTsFile, {encoding: 'utf-8'}).replace(
     /import config from '(?<path>.*)';/,
     `import config from '${outputConfigFile}';`,

@@ -14,6 +14,11 @@ jobs:
       contents: "read"
       id-token: "write"
     steps:
+      - name: Setting up Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          install-chromedriver: true
+
       - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
@@ -35,3 +40,11 @@ jobs:
 
       - name: Code format check
         run: npm run format:check
+
+      - name: Install Browser
+        run: npx puppeteer browsers install chrome
+
+      - name: Test
+        run: npm run test
+        env:
+          CI: true
