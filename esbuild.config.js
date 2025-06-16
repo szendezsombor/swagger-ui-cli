@@ -10,5 +10,5 @@ await build({
   target: 'node18',
   packages: 'external',
   sourcemap: true,
-  tsconfig: './tsconfig.json',
+  tsconfig: './tsconfig.app.json',
 });
