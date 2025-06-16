@@ -3,12 +3,11 @@ import {ServeOptionsModel} from '../models';
 import {readFileSync, copyFileSync} from 'fs';
 import signale from 'signale';
 import {PUBLIC_PATH} from '../../public-path';
-import {getConfig, handleConfigFileReplacement} from '../utils';
-import {existsSync} from 'node:fs';
+import {getConfig, handleConfigFileReplacement, resolveOpenapiSpec, isOpenApiSpecPlaceValidUtil} from '../utils';
 
-export const serve = async (openapiFilePath: string, options: ServeOptionsModel) => {
-  if (!existsSync(openapiFilePath)) {
-    signale.error('The OpenAPI file does not exist:', openapiFilePath);
+export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOptionsModel) => {
+  if (!(await isOpenApiSpecPlaceValidUtil(openApiSpecFilePathOrURL))) {
+    signale.error('The OpenAPI file does not exist or the provided url is unreachable:', openApiSpecFilePathOrURL);
     return process.exit(1);
   }
 
@@ -30,18 +29,18 @@ export const serve = async (openapiFilePath: string, options: ServeOptionsModel)
         name: 'openapi-file-watch',
         configureServer({ws, watcher, middlewares}: ViteDevServer) {
           // Serve the OpenAPI file at /openapi.conf
-          middlewares.use((req, res, next) => {
+          middlewares.use(async (req, res, next) => {
             if (req.url === '/openapi.conf') {
-              res.end(readFileSync(openapiFilePath, {encoding: 'utf-8'}));
+              res.end(await resolveOpenapiSpec(openApiSpecFilePathOrURL));
             } else {
               next();
             }
           });
 
           // Add the OpenAPI to watcher, for live updates
-          watcher.add(openapiFilePath);
+          watcher.add(openApiSpecFilePathOrURL);
 
-          const specFileName = openapiFilePath.split('/').pop() || 'openapi.yaml';
+          const specFileName = openApiSpecFilePathOrURL.split('/').pop() || 'openapi.yaml';
 
           // Watch for changes to the OpenAPI file and send updates to the client
           watcher.on('change', (file: string) => {
@@ -51,7 +50,7 @@ export const serve = async (openapiFilePath: string, options: ServeOptionsModel)
                 event: 'openapi-watch',
                 data: readFileSync(file, {encoding: 'utf-8'}),
               } as CustomPayload);
-              copyFileSync(file, openapiFilePath);
+              copyFileSync(file, openApiSpecFilePathOrURL);
             }
           });
         },

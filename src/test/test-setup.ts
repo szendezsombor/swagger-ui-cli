@@ -12,7 +12,7 @@ process.env.MATCH_IMAGE_SNAPSHOT_OPTIONS = {
 } as MatchImageSnapshotOptions;
 
 process.env.DIST_INDEX_JS = join(__dirname, '../../dist/index.js');
-process.env.OPENAPI_FILE_FOLDER = join(__dirname, './openapi.yaml');
+process.env.OPENAPI_MOCK_SPEC_FILE = join(__dirname, './openapi.yaml');
 
 describe('the project', () => {
   it('should be build before all other test start (run npm run build)', () => {
