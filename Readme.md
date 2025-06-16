@@ -13,7 +13,7 @@ This CLI tool is designed to **serve and live-reload an OpenAPI specification fi
 This command will open a live reloading server, if you change your config it will change the page.
 
 ```bash
-swagger-ui-cli serve <openapi-file>
+swagger-ui-cli serve <openapi-file | openapi-url>
 ```
 
 #### Options

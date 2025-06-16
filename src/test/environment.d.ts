@@ -5,7 +5,7 @@ declare global {
     interface ProcessEnv {
       MATCH_IMAGE_SNAPSHOT_OPTIONS: MatchImageSnapshotOptions;
       DIST_INDEX_JS: string;
-      OPENAPI_FILE_FOLDER: string;
+      OPENAPI_MOCK_SPEC_FILE: string;
     }
   }
 }
