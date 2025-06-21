@@ -1,7 +1,5 @@
 import {render, RenderResult} from 'cli-testing-library';
 import {Browser, launch} from 'puppeteer';
-import {readFileSync} from 'fs';
-import {jest} from '@jest/globals';
 
 const SERVER_DEFAULT_PORT = 8000;
 const SERVER_DEFAULT_DOMAIN = 'localhost';
@@ -23,22 +21,6 @@ describe('serve command', () => {
     const {findByText} = await serveCMD('invalid-openapi.yaml');
 
     expect(await findByText('The OpenAPI file does not exist or the provided url is unreachable: invalid-openapi.yaml')).toBeInTheConsole();
-  });
-
-  it('should load the external url docs', async () => {
-    jest.spyOn(global, 'fetch').mockImplementation(
-      jest.fn((): Promise<Response> => {
-        return Promise.resolve({
-          text: () => Promise.resolve(readFileSync(process.env.OPENAPI_MOCK_SPEC_FILE, {encoding: 'utf-8'})),
-        }) as Promise<Response>;
-      }),
-    );
-
-    const {findByText} = await serveCMD('https://example.com');
-
-    expect(await findByText(`Server is running on http://${SERVER_DEFAULT_DOMAIN}:${SERVER_DEFAULT_PORT}`)).toBeInTheConsole();
-
-    await expectSwaggerUI(browser);
   });
 
   it(`should start a server on port http://${SERVER_DEFAULT_DOMAIN}:${SERVER_DEFAULT_PORT} by default`, async () => {

@@ -1,12 +1,26 @@
 # Swagger UI CLI
 
-[![Package lint](https://github.com/szendezsombor/swagger-ui-cli/actions/workflows/lint.yaml/badge.svg)](https://github.com/szendezsombor/swagger-ui-cli/actions/workflows/lint.yaml)
+[![Package lint](https://github.com/szendezsombor/swagger-ui-cli/actions/workflows/code-check.yaml/badge.svg)](https://github.com/szendezsombor/swagger-ui-cli/actions/workflows/code-check.yaml)
 [![Build and Release](https://github.com/szendezsombor/swagger-ui-cli/actions/workflows/build-and-release.yaml/badge.svg)](https://github.com/szendezsombor/swagger-ui-cli/actions/workflows/build-and-release.yaml)
-[![Discord](https://dcbadge.limes.pink/api/server/6F6MCSKQ?style=flat)](https://discord.gg/6F6MCSKQ)
+[![Discord](https://dcbadge.limes.pink/api/server/9GNSXb5V?style=flat)](https://discord.gg/9GNSXb5V)
 
 This CLI tool is designed to **serve and live-reload an OpenAPI specification file** during development, and also to **build a static HTML page** from your OpenAPI spec file.
 
 ## Usage
+
+### Build
+
+This command will build a static HTML page from your OpenAPI specification file.
+
+```bash
+swagger-ui-cli build <openapi-file | openapi-url>
+```
+
+#### Options
+
+- `--output`: Output folder name. Default is `dist`.
+- `--multiFileBuild`: Should output multiple files instead of single index.html. Default is `false`.
+- `--config`: Path to the configuration file, there you can configure the [swagger-ui](https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/configuration.md). Default is `swagger-ui.config.js`.
 
 ### Serve
 

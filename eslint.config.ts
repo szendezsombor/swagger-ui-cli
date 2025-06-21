@@ -4,7 +4,7 @@ import tseslint from 'typescript-eslint';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 
 export default tseslint.config(
-  globalIgnores(['dist/**/*']),
+  globalIgnores(['dist/**/*', 'tmp/**/*', 'node_modules/**/*']),
   eslint.configs.recommended,
   tseslint.configs.recommended,
   eslintConfigPrettier,
@@ -19,6 +19,7 @@ export default tseslint.config(
           caughtErrorsIgnorePattern: '^_',
         },
       ],
+      'no-console': 'error',
     },
   },
 );

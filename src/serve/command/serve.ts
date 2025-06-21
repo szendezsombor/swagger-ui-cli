@@ -3,7 +3,7 @@ import {ServeOptionsModel} from '../models';
 import {readFileSync, copyFileSync} from 'fs';
 import signale from 'signale';
 import {PUBLIC_PATH} from '../../public-path';
-import {getConfig, handleConfigFileReplacement, resolveOpenapiSpec, isOpenApiSpecPlaceValidUtil} from '../utils';
+import {getConfig, handleConfigFileReplacement, isOpenApiSpecPlaceValidUtil} from '../utils';
 
 export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOptionsModel) => {
   if (!(await isOpenApiSpecPlaceValidUtil(openApiSpecFilePathOrURL))) {
@@ -11,7 +11,7 @@ export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOpti
     return process.exit(1);
   }
 
-  handleConfigFileReplacement(options.config);
+  await handleConfigFileReplacement(options.config, openApiSpecFilePathOrURL);
   const config = await getConfig(options.config);
   const devServer = await createServer({
     root: PUBLIC_PATH,
@@ -27,16 +27,7 @@ export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOpti
     plugins: [
       {
         name: 'openapi-file-watch',
-        configureServer({ws, watcher, middlewares}: ViteDevServer) {
-          // Serve the OpenAPI file at /openapi.conf
-          middlewares.use(async (req, res, next) => {
-            if (req.url === '/openapi.conf') {
-              res.end(await resolveOpenapiSpec(openApiSpecFilePathOrURL));
-            } else {
-              next();
-            }
-          });
-
+        configureServer({ws, watcher}: ViteDevServer) {
           // Add the OpenAPI to watcher, for live updates
           watcher.add(openApiSpecFilePathOrURL);
 
