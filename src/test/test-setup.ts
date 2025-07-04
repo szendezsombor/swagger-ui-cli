@@ -13,6 +13,7 @@ process.env.MATCH_IMAGE_SNAPSHOT_OPTIONS = {
 
 process.env.DIST_INDEX_JS = join(__dirname, '../../dist/index.js');
 process.env.OPENAPI_MOCK_SPEC_FILE = join(__dirname, './openapi.yaml');
+process.env.OPENAPI_SERVER_CONFIGURATION_FILE = join(__dirname, './test-swagger.server-config.js');
 
 describe('the project', () => {
   it('should be build before all other test start (run npm run build)', () => {

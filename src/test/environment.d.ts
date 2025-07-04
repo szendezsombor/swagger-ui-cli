@@ -6,6 +6,7 @@ declare global {
       MATCH_IMAGE_SNAPSHOT_OPTIONS: MatchImageSnapshotOptions;
       DIST_INDEX_JS: string;
       OPENAPI_MOCK_SPEC_FILE: string;
+      OPENAPI_SERVER_CONFIGURATION_FILE: string;
     }
   }
 }

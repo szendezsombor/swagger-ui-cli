@@ -31,15 +31,27 @@ describe('serve command', () => {
     await expectSwaggerUI(browser);
   });
 
+  it(`should use the server configuration`, async () => {
+    const {findByText} = await serveCMD(
+      process.env.OPENAPI_MOCK_SPEC_FILE,
+      `--serverConfig ${process.env.OPENAPI_SERVER_CONFIGURATION_FILE}`,
+    );
+
+    expect(await findByText(`Server is running on http://${SERVER_DEFAULT_DOMAIN}:1234`)).toBeInTheConsole();
+
+    await expectSwaggerUI(browser, 1234);
+  });
+
   it('should start server on port 10304 if the port flag is set', async () => {
     const {findByText} = await serveCMD(process.env.OPENAPI_MOCK_SPEC_FILE, '--port=10304');
 
     expect(await findByText(`Server is running on http://${SERVER_DEFAULT_DOMAIN}:10304`)).toBeInTheConsole();
-    await expectSwaggerUI(browser, SERVER_DEFAULT_DOMAIN, 10304);
+
+    await expectSwaggerUI(browser, 10304);
   });
 });
 
-export async function expectSwaggerUI(browser: Browser, domain = SERVER_DEFAULT_DOMAIN, port = SERVER_DEFAULT_PORT): Promise<void> {
+export async function expectSwaggerUI(browser: Browser, port = SERVER_DEFAULT_PORT, domain = SERVER_DEFAULT_DOMAIN): Promise<void> {
   if (!process.env['CI']) return;
   const page = await browser.newPage();
   await page.setViewport({width: 800, height: 600});

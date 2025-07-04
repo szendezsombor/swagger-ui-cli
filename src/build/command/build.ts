@@ -1,6 +1,6 @@
 import {build as viteBuild} from 'vite';
 import {PUBLIC_PATH} from '../../public-path';
-import {handleConfigFileReplacement, isOpenApiSpecPlaceValidUtil} from '../../serve';
+import {replaceClientConfigPath, isOpenApiSpecPlaceValidUtil} from '../../serve';
 import signale from 'signale';
 import {BuildOptionsModel} from '../models';
 import {join} from 'path';
@@ -12,7 +12,7 @@ export const build = async (openApiSpecFilePathOrURL: string, options: BuildOpti
     return process.exit(1);
   }
 
-  await handleConfigFileReplacement(options.config, openApiSpecFilePathOrURL);
+  await replaceClientConfigPath(options.config, openApiSpecFilePathOrURL);
 
   await viteBuild({
     root: PUBLIC_PATH,
