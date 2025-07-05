@@ -12,7 +12,7 @@ const swaggerUI = SwaggerUI({
   presets: [SwaggerUI.presets.apis],
 
   // User-defined configuration
-  ...(config.config || {}),
+  ...(config || {}),
 
   // Non overridable options
   dom_id: '#swagger-ui',

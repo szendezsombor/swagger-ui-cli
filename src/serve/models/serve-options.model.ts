@@ -1,15 +1,14 @@
 import {SwaggerUIOptions} from 'swagger-ui';
-import {ServerOptions} from 'vite';
+import {InlineConfig} from 'vite';
 
 export type SwaggerUIConfigOptions = Omit<SwaggerUIOptions, 'dom_id'>;
 
-export interface ServeConfig {
-  server?: ServerOptions;
-  config?: SwaggerUIConfigOptions;
-}
+export type ServerConfig = InlineConfig;
+export type ClientConfig = SwaggerUIConfigOptions;
 
 export interface ServeOptionsModel {
   port: number;
   domain: string;
   config: string;
+  serverConfig: string;
 }

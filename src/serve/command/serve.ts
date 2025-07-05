@@ -3,7 +3,7 @@ import {ServeOptionsModel} from '../models';
 import {readFileSync, copyFileSync} from 'fs';
 import signale from 'signale';
 import {PUBLIC_PATH} from '../../public-path';
-import {getConfig, handleConfigFileReplacement, isOpenApiSpecPlaceValidUtil} from '../utils';
+import {getServerConfig, replaceClientConfigPath, isOpenApiSpecPlaceValidUtil} from '../utils';
 
 export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOptionsModel) => {
   if (!(await isOpenApiSpecPlaceValidUtil(openApiSpecFilePathOrURL))) {
@@ -11,20 +11,23 @@ export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOpti
     return process.exit(1);
   }
 
-  await handleConfigFileReplacement(options.config, openApiSpecFilePathOrURL);
-  const config = await getConfig(options.config);
+  await replaceClientConfigPath(options.config, openApiSpecFilePathOrURL);
+  const serverConfig = await getServerConfig(options.serverConfig);
   const devServer = await createServer({
+    ...serverConfig,
     root: PUBLIC_PATH,
     optimizeDeps: {
-      include: ['swagger-ui'],
+      ...serverConfig.optimizeDeps,
+      include: [...(serverConfig.optimizeDeps?.include || []), 'swagger-ui'],
     },
     server: {
       host: options.domain,
       port: options.port,
       allowedHosts: [options.domain],
-      ...(config.server || {}),
+      ...(serverConfig.server || {}),
     },
     plugins: [
+      ...(serverConfig.plugins || []),
       {
         name: 'openapi-file-watch',
         configureServer({ws, watcher}: ViteDevServer) {
@@ -52,7 +55,7 @@ export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOpti
   await devServer.listen();
 
   const startedPort = devServer.config.server.port;
-  if (startedPort !== options.port && startedPort !== config.server?.port)
+  if (startedPort !== options.port && startedPort !== serverConfig.server?.port)
     signale.warn(`Port already in use: ${options.port}. Using port: ${startedPort} instead.`);
 
   signale.success(`Server is running on http://${options.domain}:${devServer.config.server.port}`);
