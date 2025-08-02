@@ -54,6 +54,11 @@ export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOpti
 
   await devServer.listen();
 
+  process.on('SIGINT', () => {
+    devServer.close();
+    process.exit(0);
+  });
+
   const startedPort = devServer.config.server.port;
   if (startedPort !== options.port && startedPort !== serverConfig.server?.port)
     signale.warn(`Port already in use: ${options.port}. Using port: ${startedPort} instead.`);
