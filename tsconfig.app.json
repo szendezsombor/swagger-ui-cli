@@ -6,6 +6,9 @@
   "compilerOptions": {
     "composite": true,
     "types": ["node", "vite/client"],
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "paths": {
+      "@user-config": ["./public/swagger-ui.config.ts"]
+    }
   }
 }
