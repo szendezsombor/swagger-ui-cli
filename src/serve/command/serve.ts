@@ -1,9 +1,10 @@
 import {createServer, CustomPayload, ViteDevServer} from 'vite';
 import {ServeOptionsModel} from '../models';
-import {readFileSync, copyFileSync} from 'fs';
+import {readFileSync, copyFileSync, existsSync} from 'fs';
 import signale from 'signale';
 import {PUBLIC_PATH} from '../../public-path';
-import {getServerConfig, replaceClientConfigPath, isOpenApiSpecPlaceValidUtil} from '../utils';
+import {getServerConfig, writeSpecFile, isOpenApiSpecPlaceValidUtil} from '../utils';
+import {join} from 'node:path';
 
 export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOptionsModel) => {
   if (!(await isOpenApiSpecPlaceValidUtil(openApiSpecFilePathOrURL))) {
@@ -11,11 +12,19 @@ export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOpti
     return process.exit(1);
   }
 
-  await replaceClientConfigPath(options.config, openApiSpecFilePathOrURL);
+  await writeSpecFile(openApiSpecFilePathOrURL);
   const serverConfig = await getServerConfig(options.serverConfig);
+  const userConfigFile = join(process.cwd(), options.config);
   const devServer = await createServer({
     ...serverConfig,
     root: PUBLIC_PATH,
+    resolve: {
+      ...serverConfig.resolve,
+      alias: {
+        ...((serverConfig.resolve?.alias as Record<string, string>) || {}),
+        '@user-config': existsSync(userConfigFile) ? userConfigFile : join(PUBLIC_PATH, 'swagger-ui.config'),
+      },
+    },
     optimizeDeps: {
       ...serverConfig.optimizeDeps,
       include: [...(serverConfig.optimizeDeps?.include || []), 'swagger-ui'],
@@ -44,9 +53,14 @@ export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOpti
                 event: 'openapi-watch',
                 data: readFileSync(file, {encoding: 'utf-8'}),
               } as CustomPayload);
-              copyFileSync(file, openApiSpecFilePathOrURL);
+              copyFileSync(file, join(PUBLIC_PATH, 'spec.txt'));
             }
           });
+        },
+        // Prevent Vite from doing a full page reload when spec.txt changes,
+        // since we handle updates via the custom WebSocket event above
+        handleHotUpdate({file}: {file: string}) {
+          if (file.endsWith('spec.txt')) return [];
         },
       },
     ],
