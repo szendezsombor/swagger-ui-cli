@@ -1,10 +1,11 @@
-import {createServer, CustomPayload, ViteDevServer} from 'vite';
+import {createServer, CustomPayload, normalizePath, ViteDevServer} from 'vite';
 import {ServeOptionsModel} from '../models';
-import {readFileSync, copyFileSync, existsSync} from 'fs';
+import {readFileSync, writeFileSync, existsSync} from 'fs';
 import signale from 'signale';
 import {PUBLIC_PATH} from '../../public-path';
 import {getServerConfig, writeSpecFile, isOpenApiSpecPlaceValidUtil} from '../utils';
-import {join} from 'node:path';
+import {isValidUrl} from '../utils/is-valid-url.util';
+import {join, resolve} from 'node:path';
 
 export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOptionsModel) => {
   if (!(await isOpenApiSpecPlaceValidUtil(openApiSpecFilePathOrURL))) {
@@ -27,7 +28,7 @@ export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOpti
     },
     optimizeDeps: {
       ...serverConfig.optimizeDeps,
-      include: [...(serverConfig.optimizeDeps?.include || []), 'swagger-ui'],
+      include: [...(serverConfig.optimizeDeps?.include || []), 'swagger-ui-dist/swagger-ui-bundle.js'],
     },
     server: {
       host: options.domain,
@@ -39,28 +40,54 @@ export const serve = async (openApiSpecFilePathOrURL: string, options: ServeOpti
       ...(serverConfig.plugins || []),
       {
         name: 'openapi-file-watch',
-        configureServer({ws, watcher}: ViteDevServer) {
-          // Add the OpenAPI to watcher, for live updates
-          watcher.add(openApiSpecFilePathOrURL);
-
-          const specFileName = openApiSpecFilePathOrURL.split('/').pop() || 'openapi.yaml';
-
-          // Watch for changes to the OpenAPI file and send updates to the client
-          watcher.on('change', (file: string) => {
-            if (file.endsWith(specFileName)) {
-              ws.send({
-                type: 'custom',
-                event: 'openapi-watch',
-                data: readFileSync(file, {encoding: 'utf-8'}),
-              } as CustomPayload);
-              copyFileSync(file, join(PUBLIC_PATH, 'spec.txt'));
+        configureServer({ws, watcher, middlewares}: ViteDevServer) {
+          // Serve spec.txt directly from disk, bypassing Vite's transform cache
+          middlewares.use((req, res, next) => {
+            if (req.url === '/spec.txt') {
+              res.setHeader('Content-Type', 'text/plain');
+              res.setHeader('Cache-Control', 'no-store');
+              res.end(readFileSync(join(PUBLIC_PATH, 'spec.txt'), {encoding: 'utf-8'}));
+              return;
             }
+            next();
+          });
+
+          // A spec loaded from a URL has no file to watch
+          if (isValidUrl(openApiSpecFilePathOrURL)) return;
+
+          const specPath = normalizePath(resolve(openApiSpecFilePathOrURL));
+          const isSpec = (file: string) => normalizePath(resolve(file)) === specPath;
+
+          // Keep spec.txt in sync for page reloads, then send the new spec to the client
+          const updateSpec = (file: string) => {
+            if (!isSpec(file)) return;
+            const spec = readFileSync(file, {encoding: 'utf-8'});
+            // Editors and generators may empty the file before writing it, skip that state
+            if (!spec.trim()) return;
+            writeFileSync(join(PUBLIC_PATH, 'spec.txt'), spec);
+            ws.send({type: 'custom', event: 'openapi-watch', data: spec} as CustomPayload);
+          };
+
+          // Add the OpenAPI to watcher, for live updates
+          watcher.add(specPath);
+          watcher.on('change', updateSpec);
+          // A spec that is deleted and written again comes back as 'add'
+          watcher.on('add', updateSpec);
+          // A polling watcher stops watching a deleted file, so watch it again
+          watcher.on('unlink', file => {
+            if (!isSpec(file)) return;
+            watcher.add(specPath);
+            if (existsSync(specPath)) updateSpec(specPath);
           });
         },
         // Prevent Vite from doing a full page reload when spec.txt changes,
-        // since we handle updates via the custom WebSocket event above
-        handleHotUpdate({file}: {file: string}) {
-          if (file.endsWith('spec.txt')) return [];
+        // but invalidate the module cache so reloads get the latest version
+        handleHotUpdate({file, server}: {file: string; server: ViteDevServer}) {
+          if (file.endsWith('spec.txt')) {
+            const mod = server.moduleGraph.getModulesByFile(file);
+            if (mod) mod.forEach(m => server.moduleGraph.invalidateModule(m));
+            return [];
+          }
         },
       },
     ],

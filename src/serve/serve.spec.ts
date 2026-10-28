@@ -34,7 +34,7 @@ describe('serve command', () => {
   it(`should use the server configuration`, async () => {
     const {findByText} = await serveCMD(
       process.env.OPENAPI_MOCK_SPEC_FILE,
-      `--serverConfig ${process.env.OPENAPI_SERVER_CONFIGURATION_FILE}`,
+      `--serverConfig=${process.env.OPENAPI_SERVER_CONFIGURATION_FILE}`,
     );
 
     expect(await findByText(`Server is running on http://${SERVER_DEFAULT_DOMAIN}:1234`)).toBeInTheConsole();
