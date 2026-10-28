@@ -8,13 +8,15 @@ describe('serve command', () => {
   let browser: Browser;
 
   beforeAll(async () => {
+    // The browser is only needed for the visual tests
+    if (!process.env['VISUAL_TESTS']) return;
     browser = await launch({
       args: ['--no-sandbox'],
     });
   });
 
   afterAll(async () => {
-    await browser.close();
+    await browser?.close();
   });
 
   it('should exit with process 1 if the user pass invalid openapi spec file', async () => {
@@ -52,7 +54,8 @@ describe('serve command', () => {
 });
 
 export async function expectSwaggerUI(browser: Browser, port = SERVER_DEFAULT_PORT, domain = SERVER_DEFAULT_DOMAIN): Promise<void> {
-  if (!process.env['CI']) return;
+  // Visual tests are off in the regular CI for now, only the snapshot workflow turns them on
+  if (!process.env['VISUAL_TESTS']) return;
   const page = await browser.newPage();
   await page.setViewport({width: 800, height: 600});
   await page.goto(`http://${domain}:${port}`, {waitUntil: 'networkidle0'});
