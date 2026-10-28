@@ -28,7 +28,7 @@ export const build = async (openApiSpecFilePathOrURL: string, options: BuildOpti
       outDir: join(process.cwd(), options.output),
     },
     optimizeDeps: {
-      include: ['swagger-ui'],
+      include: ['swagger-ui-dist/swagger-ui-bundle.js'],
     },
   });
 };

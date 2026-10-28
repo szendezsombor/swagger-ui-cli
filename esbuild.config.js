@@ -7,7 +7,7 @@ await build({
   outfile: 'dist/index.js',
   format: 'esm',
   platform: 'node',
-  target: 'node18',
+  target: 'node22',
   packages: 'external',
   sourcemap: true,
   tsconfig: './tsconfig.app.json',
